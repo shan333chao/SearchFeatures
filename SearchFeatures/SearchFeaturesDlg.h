@@ -66,6 +66,12 @@ private:
     返回值为进程句柄
     */
     inline HANDLE GetProcessHandle(DWORD dwPid);
+    /// <summary>
+    /// 获取下拉框的选择进程名
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    CString GetSelectProcessName(CString str);
 
     //用于获取当前所有进程
     void GetAllProcess();
@@ -80,6 +86,13 @@ private:
     
     void CreateCppCode();
     void CreateECode();
+    /// <summary>
+    /// 下拉框搜索 并选中
+    /// </summary>
+    /// <param name="pComboBox"></param>
+    /// <param name="lpszText"></param>
+    /// <returns></returns>
+    int SelectComboItemByText(CComboBox* pComboBox, LPCTSTR lpszText);
 
     //初始化UI
     void InitUI();
@@ -126,4 +139,6 @@ private:
     
     // 特征码列表edit控件变量
     CEdit m_editMarkCodeList;
+public:
+    afx_msg void OnBnClickedButtonRefresh();
 };

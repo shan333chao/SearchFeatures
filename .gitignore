@@ -1,4 +1,4 @@
-
+.vs
 Debug
 Release
 *.suo
@@ -9,3 +9,4 @@ ipch/hookgamelua-fbb13a0c/hookgamelua-a784cd59.ipch
 *.aps
 SearchFeatures/代码.txt
 SearchFeatures/代码.txt
+SearchFeatures/SearchFeatures.vcxproj.user
