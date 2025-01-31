@@ -324,15 +324,24 @@ void CSearchFeaturesDlg::OnBnClickedBtnSearch()
 
 		DWORD dwBeginAddr = std::stoi(m_dwBeginAddr.GetBuffer(), nullptr, 16);
 		DWORD dwEndAddr = std::stoi(m_dwEndAddr.GetBuffer(), nullptr, 16);
+		BOOL isCall = vecMarkCodeLine[5].CompareNoCase(_T("CALL")) == 0;
 		DWORD dwCount = fc.FindMatchingCode(m_hProcess, strMarkCode, dwBeginAddr,
 			dwEndAddr, dwRetAddr, _ttoi(vecMarkCodeLine[3]),
-			vecMarkCodeLine[5].CompareNoCase(_T("CALL")) == 0, false);
+			isCall, false);
 
 		if (dwCount > 0)
 		{
 			//取值
 			DWORD dwValue;
-			ReadProcessMemory(m_hProcess, (LPVOID)dwRetAddr[0], &dwValue, _ttoi(vecMarkCodeLine[4]), NULL);
+			if (isCall)
+			{
+				dwValue = dwRetAddr[0];
+			}
+			else
+			{
+				ReadProcessMemory(m_hProcess, (LPVOID)dwRetAddr[0], &dwValue, _ttoi(vecMarkCodeLine[4]), NULL);
+			}
+
 
 			//将结果设置到UI上
 			CString strResult;
@@ -382,8 +391,14 @@ void CSearchFeaturesDlg::OnBnClickedBtnTest()
 		return;
 	}
 	DWORD dwValue;
-	ReadProcessMemory(m_hProcess, (LPVOID)dwRetAddr[0], &dwValue, m_uLen, NULL);
-
+	if (m_btnType==1)
+	{
+		dwValue = dwRetAddr[0];
+	}
+	else
+	{
+		ReadProcessMemory(m_hProcess, (LPVOID)dwRetAddr[0], &dwValue, m_uLen, NULL);
+	} 
 	strMsg.Format(_T("%X"), dwValue);
 	MessageBox(strMsg, _T("测试结果"));
 }
@@ -474,17 +489,31 @@ void CSearchFeaturesDlg::OnBnClickedBtnLoad()
 		UpdateData(FALSE);
 	}
 }
+void CSearchFeaturesDlg::RemoveNewlines(CString& str) {
+	LPTSTR pBuf = str.GetBuffer(0);
+	LPTSTR pDst = pBuf;
+	while (*pBuf) {
+		if (*pBuf != _T('\r') && *pBuf != _T('\n')) {
+			*pDst++ = *pBuf;
+		}
+		++pBuf;
+	}
+	*pDst = _T('\0');
+	str.ReleaseBuffer();
+}
 
 std::vector<CString> CSearchFeaturesDlg::SplitString(const CString& str, TCHAR delimiter)
 {
 	//根据传进来的delimiter分割字符串 并存储到vector中再返回
 	std::vector<CString> tokens;
 	int start = 0;
+	
 	for (int i = 0; i < str.GetLength(); i++)
 	{
 		if (str[i] == delimiter)
 		{
 			CString token = str.Mid(start, i - start);
+			RemoveNewlines(token);
 			tokens.push_back(token);
 			start = i + 1;
 		}
@@ -611,6 +640,7 @@ int CSearchFeaturesDlg::SelectComboItemByText(CComboBox* pComboBox, LPCTSTR lpsz
 		if (itemTextLower.Find(partialText) != -1)
 		{
 			pComboBox->SetCurSel(i);
+		
 			return i;
 		}
 	}
@@ -632,5 +662,5 @@ void CSearchFeaturesDlg::OnBnClickedButtonRefresh()
 	CSearchFeaturesDlg::GetAllProcess();
 	m_comboProcessList.SetWindowTextW(strProcessName);
 	SelectComboItemByText(&m_comboProcessList, strProcessName);
-
+	OnCbnSelchangeComboProcesslist();
 }

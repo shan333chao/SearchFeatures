@@ -54,6 +54,8 @@ public:
 
     //加载特征码文件按钮响应函数
     afx_msg void OnBnClickedBtnLoad();
+    //移除字符串中的换行符
+    void RemoveNewlines(CString& str);
 
     //生成代码按钮响应函数
     afx_msg void OnBnClickedBtnCreatecode();
