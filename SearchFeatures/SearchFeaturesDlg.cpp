@@ -351,7 +351,7 @@ void CSearchFeaturesDlg::OnBnClickedBtnSearch()
 			m_listResult.InsertItem(dwCount, _T(""));
 			m_listResult.SetItemText(dwCount, 0, vecMarkCodeLine[0]);//设置名字
 			m_listResult.SetItemText(dwCount, 1, strResult);//设置读取结果
-			vecMarkCodeLine[1].Append(vecMarkCodeLine[5]);
+			vecMarkCodeLine[1].Append(vecMarkCodeLine[5]);//追加搜索类型
 			m_listResult.SetItemText(dwCount, 2, vecMarkCodeLine[1]);//设置注释
 		}
 	}
@@ -559,9 +559,9 @@ void CSearchFeaturesDlg::InitUI()
 	DWORD dwStyle = m_listResult.GetExtendedStyle();
 	dwStyle |= LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_INFOTIP | LVS_EX_DOUBLEBUFFER;
 	m_listResult.SetExtendedStyle(dwStyle);
-	m_listResult.InsertColumn(0, _T("名  称"), LVCFMT_LEFT, 110);
+	m_listResult.InsertColumn(0, _T("名  称"), LVCFMT_LEFT, 200);
 	m_listResult.InsertColumn(1, _T("结  果"), LVCFMT_LEFT, 100);
-	m_listResult.InsertColumn(2, _T("注  释"), LVCFMT_LEFT, 110);
+	m_listResult.InsertColumn(2, _T("注  释"), LVCFMT_LEFT, 200);
 
 	m_comboBoxLanguage.InsertString(-1, _T("C++"));
 	m_comboBoxLanguage.InsertString(-1, _T("易语言"));
