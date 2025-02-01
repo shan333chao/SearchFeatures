@@ -130,7 +130,7 @@ private:
     //特征码列表
     CString m_strMarkCodeList;
     
-    // 表明用户搜索类型，0==基址 1==call 2==偏移
+    // 表明用户搜索类型，0==基址 1==call 2==偏移 3==地址
     int m_btnType;
     
     // 显示特征码搜索结果

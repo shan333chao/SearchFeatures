@@ -216,7 +216,7 @@ CString  CSearchFeaturesDlg::GetSelectProcessName(CString str)
 	if (pos != -1)
 	{
 		// 截取 '[' 之前的子字符串
-		result = str.Left(pos-1);
+		result = str.Left(pos - 1);
 	}
 	else
 	{
@@ -227,7 +227,7 @@ CString  CSearchFeaturesDlg::GetSelectProcessName(CString str)
 	// 去除截取后的字符串两端的空白字符
 	return  result.Trim();
 
- 
+
 
 }
 
@@ -325,6 +325,7 @@ void CSearchFeaturesDlg::OnBnClickedBtnSearch()
 		DWORD dwBeginAddr = std::stoi(m_dwBeginAddr.GetBuffer(), nullptr, 16);
 		DWORD dwEndAddr = std::stoi(m_dwEndAddr.GetBuffer(), nullptr, 16);
 		BOOL isCall = vecMarkCodeLine[5].CompareNoCase(_T("CALL")) == 0;
+		BOOL isAddr = vecMarkCodeLine[5].CompareNoCase(_T("地址")) == 0;
 		DWORD dwCount = fc.FindMatchingCode(m_hProcess, strMarkCode, dwBeginAddr,
 			dwEndAddr, dwRetAddr, _ttoi(vecMarkCodeLine[3]),
 			isCall, false);
@@ -333,7 +334,7 @@ void CSearchFeaturesDlg::OnBnClickedBtnSearch()
 		{
 			//取值
 			DWORD dwValue;
-			if (isCall)
+			if (isCall || isAddr)
 			{
 				dwValue = dwRetAddr[0];
 			}
@@ -350,6 +351,7 @@ void CSearchFeaturesDlg::OnBnClickedBtnSearch()
 			m_listResult.InsertItem(dwCount, _T(""));
 			m_listResult.SetItemText(dwCount, 0, vecMarkCodeLine[0]);//设置名字
 			m_listResult.SetItemText(dwCount, 1, strResult);//设置读取结果
+			vecMarkCodeLine[1].Append(vecMarkCodeLine[5]);
 			m_listResult.SetItemText(dwCount, 2, vecMarkCodeLine[1]);//设置注释
 		}
 	}
@@ -391,14 +393,14 @@ void CSearchFeaturesDlg::OnBnClickedBtnTest()
 		return;
 	}
 	DWORD dwValue;
-	if (m_btnType==1)
+	if (m_btnType == 1 || m_btnType == 3)
 	{
 		dwValue = dwRetAddr[0];
 	}
 	else
 	{
 		ReadProcessMemory(m_hProcess, (LPVOID)dwRetAddr[0], &dwValue, m_uLen, NULL);
-	} 
+	}
 	strMsg.Format(_T("%X"), dwValue);
 	MessageBox(strMsg, _T("测试结果"));
 }
@@ -420,6 +422,9 @@ void CSearchFeaturesDlg::OnBnClickedBtnAddlist()
 		break;
 	case 2:
 		strType = _T("偏移");
+		break;
+	case 3:
+		strType = _T("地址");
 		break;
 	default:
 		break;
@@ -507,7 +512,7 @@ std::vector<CString> CSearchFeaturesDlg::SplitString(const CString& str, TCHAR d
 	//根据传进来的delimiter分割字符串 并存储到vector中再返回
 	std::vector<CString> tokens;
 	int start = 0;
-	
+
 	for (int i = 0; i < str.GetLength(); i++)
 	{
 		if (str[i] == delimiter)
@@ -640,7 +645,7 @@ int CSearchFeaturesDlg::SelectComboItemByText(CComboBox* pComboBox, LPCTSTR lpsz
 		if (itemTextLower.Find(partialText) != -1)
 		{
 			pComboBox->SetCurSel(i);
-		
+
 			return i;
 		}
 	}
